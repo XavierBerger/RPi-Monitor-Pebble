@@ -4,7 +4,7 @@
   "longName": "RPi Monitor",
   "companyName": "Alexander Kropochev",
   "versionCode": 1,
-  "versionLabel": "1.0.0",
+  "versionLabel": "1.0",
   "capabilities": [ "configurable" ],
   "watchapp": {
     "watchface": false
