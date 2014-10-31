@@ -107,14 +107,14 @@ var getData = function() {
 	Pebble.sendAppMessage(dict);
 };
 
-Pebble.addEventListener("ready",
-	function(e) {
+Pebble.addEventListener("ready", function(e) {
+		"use strict";
 		if (host) {
 			console.log(host);
 			getData();
 		};
-	}
-);
+	
+});
 
 Pebble.addEventListener("showConfiguration",
   function(e) {
