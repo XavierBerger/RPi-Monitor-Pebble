@@ -188,7 +188,7 @@ void window_load(Window *window)
   	layer_add_child((Layer *)slide_start, bitmap_layer_get_layer(logo_layer));
 
   	caption_text_layer = init_text_layer(GRect(0, 105, 144, 40), GColorBlack, GColorClear, "RESOURCE_ID_GOTHIC_28_BOLD", GTextAlignmentCenter);
-  	text_layer_set_text(caption_text_layer, "RPi Monitor");
+  	text_layer_set_text(caption_text_layer, "RPi-Monitor");
   	layer_add_child((Layer *)slide_start, text_layer_get_layer(caption_text_layer));
 
   	status_text_layer = init_text_layer(GRect(0, 135, 144, 25), GColorBlack, GColorClear, "RESOURCE_ID_GOTHIC_18", GTextAlignmentCenter);
