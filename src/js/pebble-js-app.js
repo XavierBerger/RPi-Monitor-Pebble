@@ -65,7 +65,7 @@ var getData = function() {
 	var response = HTTPGET(host + "/static.json");
 	var static_json = JSON.parse(response);
 
-
+	
 	var loads = "Loads: " + dynamic_json.load1 + " - " + dynamic_json.load5 + " - " + dynamic_json.load15;
 	var cpu_frecuency = "CPU frequency: " + dynamic_json.cpu_frequency + "MHz";
 	var cpu_voltage = "Voltage: " + dynamic_json.cpu_voltage + "V";
@@ -80,7 +80,7 @@ var getData = function() {
 	var memory = memory_used + "\n" + memory_available + "\n" + memory_total;
 
 	var swap_free = "Free: " + KMG((static_json.swap_total-dynamic_json.swap_used), "M");
-	var swap_percent = Percent(dynamic_json.swap_used, static_json.swap_total);
+	var swap_percent = (Percent(dynamic_json.swap_used, static_json.swap_total) == "NaN") ? 0 : Percent(dynamic_json.swap_used, static_json.swap_total);
 	var swap_used = "Used: " + KMG(dynamic_json.swap_used, "M") + " (" + swap_percent + "%)";
 	var swap_total = "Total: " + KMG(static_json.swap_total, "M");
 	var swap = swap_used + "\n" + swap_free + "\n" + swap_total;
@@ -99,22 +99,13 @@ var getData = function() {
 	var distribution = static_json.distribution;
 	var kernel_version = static_json.kernel_version;
 	var firmware = "Firmware: " + static_json.firmware;
-	var upgrade = "Package(s) to be: " + dynamic_json.upgrade;
+	var upgrade = "Package(s): " + dynamic_json.upgrade;
 	var version = processor + "\n" + distribution + "\n" + kernel_version + "\n" + firmware + "\n" + upgrade;
 
 	var dict = {"OK" : load, "CPU" : cpu, "MEMORY" : memory, "MEMORY_P" : Math.round(memory_percent), "SWAP" : swap, "SWAP_P" : Math.round(swap_percent), "SDCARD" : sdcard, "SDCARD_P" : Math.round(sdcard_percent), "NET" : net, "VERSION" : version};
-
+	
 	Pebble.sendAppMessage(dict);
 };
-
-Pebble.addEventListener("ready",
-	function(e) {
-		if (host) {
-			console.log(host);
-			getData();
-		};
-	}
-);
 
 Pebble.addEventListener("showConfiguration",
   function(e) {
@@ -128,3 +119,12 @@ Pebble.addEventListener("webviewclosed",
     localStorage.setItem('host', JSON.stringify(options.host));
   }
 );
+
+Pebble.addEventListener("ready", function(e) {
+		"use strict";
+		if (host) {
+			//console.log(host);
+			getData();
+		};
+	
+});
