@@ -30,7 +30,7 @@
           <input type="text" name="user" id="user" style="text-align:center" value="">
 
           <label for="fieldcontain-custom-1">Password:</label>
-          <input type="text" name="pass" id="pass" style="text-align:center" value="">
+          <input type="password" name="pass" id="pass" style="text-align:center" value="">
         </div>
 
         <div class="ui-body ui-body-b">
@@ -54,9 +54,9 @@
     <script>
         $().ready(function() {
             $('#url').val(JSON.parse(localStorage.getItem('host')));
-      $('#user').val(JSON.parse(localStorage.getItem('user')));
-      $('#pass').val(JSON.parse(localStorage.getItem('pass')));
-      $('#auth').val(JSON.parse(localStorage.getItem('auth')));
+            $('#user').val(JSON.parse(localStorage.getItem('user')));
+            $('#pass').val(JSON.parse(localStorage.getItem('pass')));
+            $('#auth').val(JSON.parse(localStorage.getItem('auth'))).slider('refresh');
             
             $("#b-cancel").click(function() {
                 document.location = "pebblejs://close";
@@ -64,13 +64,19 @@
         
             $("#b-submit").click(function() {
                 var options = {
-                    'host': $("#url").val()
+                    'host': $("#url").val(),
+                    'user': $("#user").val(),
+                    'pass': $("#pass").val(),
+                    'auth': $("#auth").val()
                 }
-                var host = "pebblejs://close#" + encodeURIComponent(JSON.stringify(options));
+                
                 localStorage.setItem('host', JSON.stringify(options.host));
-                document.location = host;
+                localStorage.setItem('user', JSON.stringify(options.user));
+                localStorage.setItem('pass', JSON.stringify(options.pass));
+                localStorage.setItem('auth', JSON.stringify(options.auth));
+
+                location.href = "pebblejs://close#" + encodeURIComponent(JSON.stringify(options));
             });
         });
     </script>
   </body>
-</html>
