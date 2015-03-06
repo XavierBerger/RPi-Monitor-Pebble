@@ -1,56 +1,63 @@
+var Base64={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){var t="";var n,r,i,s,o,u,a;var f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},decode:function(e){var t="";var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9\+\/\=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return t},_utf8_encode:function(e){e=e.replace(/\r\n/g,"\n");var t="";for(var n=0;n<e.length;n++){var r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){var t="";var n=0;var r=c1=c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}};
 var load = 0;
 var host = JSON.parse(localStorage.getItem('host')) || [];
+var user = JSON.parse(localStorage.getItem('user')) || [];
+var pass = JSON.parse(localStorage.getItem('pass')) || [];
+var auth = JSON.parse(localStorage.getItem('auth')) || [];
 
 function HTTPGET(url) {
 	var req = new XMLHttpRequest();
 	req.open("GET", url, false);
+	if (auth == "1"){
+		req.setRequestHeader("Authorization", "Basic " + Base64.encode(user + ":" + pass)); 
+	}
 	req.send(null);
-	if (req.status = 200) {
+	if (req.status == 200) {
 		load = 1;
 		return req.responseText;
-	};
+	}
 }
 
 function Pad(n){
-  return n<10 ? '0'+n : n
+  return n<10 ? '0'+n : n;
 }
 
 function Plural(n){
-  return n>1 ? 's ' : ' '
+  return n>1 ? 's ' : ' ';
 }
 
 function Uptime(value){
-  uptimetext='';
-  years = Math.floor(value / 31556926);
-  rest = value % 31556926;
-  days = Math.floor( rest / 86400);
+  var uptimetext='';
+  var years = Math.floor(value / 31556926);
+  var rest = value % 31556926;
+  var days = Math.floor( rest / 86400);
   rest = value % 86400;
-  hours = Math.floor(rest / 3600);
+  var hours = Math.floor(rest / 3600);
   rest = value % 3600;
-  minutes = Math.floor(rest / 60);
-  seconds = Math.floor(rest % 60);
-  if ( years != 0 ) { uptimetext += uptimetext + years + " year" + Plural(years) }
-  if ( ( years != 0 ) || ( days != 0) ) { uptimetext += days + " day" + Plural(days)}
-  if ( ( days != 0 ) || ( hours != 0) ) { uptimetext += Pad(hours) + " hour" + Plural(hours)}
+  var minutes = Math.floor(rest / 60);
+  var seconds = Math.floor(rest % 60);
+  if ( years !== 0 ) { uptimetext += uptimetext + years + " year" + Plural(years); }
+  if ( ( years !== 0 ) || ( days !== 0) ) { uptimetext += days + " day" + Plural(days);}
+  if ( ( days !== 0 ) || ( hours !== 0) ) { uptimetext += Pad(hours) + " hour" + Plural(hours);}
   uptimetext += Pad(minutes) + " minute" + Plural(minutes);
   uptimetext += Pad(seconds) + " second" + Plural(seconds);
   return uptimetext;
 }
 
 function KMG(value, initPre){
-  unit = 1024;
-  prefix = "kMGTPE";
+  var unit = 1024;
+  var prefix = "kMGTPE";
   if (initPre){
     value *= Math.pow(unit,prefix.indexOf(initPre)+1);
   }
   try {
-    if (Math.abs(value) < unit) { return value + "B" };
-    exp = Math.floor(Math.log(Math.abs(value)) / Math.log(unit));
-    pre = prefix.charAt(exp-1);
+    if (Math.abs(value) < unit) { return value + "B"; }
+    var exp = Math.floor(Math.log(Math.abs(value)) / Math.log(unit));
+    var pre = prefix.charAt(exp-1);
     return (value / Math.pow(unit, exp)).toFixed(2) + pre + "B";
   }
   catch (e) {
-    return "Error"
+    return "Error";
   }
 }
 
@@ -62,7 +69,7 @@ var getData = function() {
 	var response = HTTPGET(host + "/dynamic.json");
 	var dynamic_json = JSON.parse(response);
 
-	var response = HTTPGET(host + "/static.json");
+	response = HTTPGET(host + "/static.json");
 	var static_json = JSON.parse(response);
 
 	
@@ -109,22 +116,24 @@ var getData = function() {
 
 Pebble.addEventListener("showConfiguration",
   function(e) {
-    Pebble.openURL("http://kropochev.com/pebble/rpi_monitor/index.html");
+	Pebble.openURL("https://apps.oscarrc.tk/rpimonitor");
   }
 );
 
 Pebble.addEventListener("webviewclosed",
   function(e) {
-    options = JSON.parse(decodeURIComponent(e.response));
+    var options = JSON.parse(decodeURIComponent(e.response));
     localStorage.setItem('host', JSON.stringify(options.host));
+	localStorage.setItem('user', JSON.stringify(options.user));
+	localStorage.setItem('pass', JSON.stringify(options.pass));
+	localStorage.setItem('auth', JSON.stringify(options.auth));
   }
 );
 
 Pebble.addEventListener("ready", function(e) {
-		"use strict";
-		if (host) {
-			//console.log(host);
-			getData();
-		};
-	
+	"use strict";
+	if (host) {
+		//console.log(host);
+		getData();
+	}	
 });
