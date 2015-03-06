@@ -1,22 +1,30 @@
 {
-    "appKeys": {
-        "CPU": 1,
-        "MEMORY": 2,
-        "MEMORY_P": 3,
-        "NET": 8,
-        "OK": 0,
-        "SDCARD": 6,
-        "SDCARD_P": 7,
-        "SWAP": 4,
-        "SWAP_P": 5,
-        "VERSION": 9
+    "uuid": "f8a46c71-df8d-4b29-b1bd-aa6df8563c1f",
+    "companyName": "Alexander Kropochev",
+    "longName": "RPi-Monitor",
+    "shortName": "RPi-Monitor",
+    "versionCode": 5,
+    "versionLabel": "1.4",
+    "sdkVersion": "2",
+    "projectType": "native",
+    "watchapp": {
+        "watchface": false
     },
     "capabilities": [
         "configurable"
     ],
-    "companyName": "Alexander Kropochev",
-    "longName": "RPi-Monitor",
-    "projectType": "native",
+    "appKeys": {
+        "OK": 0,
+        "CPU": 1,
+        "MEMORY": 2,
+        "MEMORY_P": 3,
+        "SWAP": 4,
+        "SWAP_P": 5,
+        "SDCARD": 6,
+        "SDCARD_P": 7,
+        "NET": 8,
+        "VERSION": 9
+    },
     "resources": {
         "media": [
             {
@@ -51,13 +59,5 @@
                 "type": "png"
             }
         ]
-    },
-    "sdkVersion": "2",
-    "shortName": "RPi-Monitor",
-    "uuid": "f8a46c71-df8d-4b29-b1bd-aa6df8563c1f",
-    "versionCode": 4,
-    "versionLabel": "1.3",
-    "watchapp": {
-        "watchface": false
     }
 }
