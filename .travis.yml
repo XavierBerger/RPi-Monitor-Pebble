@@ -1,0 +1,9 @@
+language: c
+ 
+env: PEBBLE_SDK=PebbleSDK-2.7 PEBBLE_PROJECT_PATH=~/pebble-dev/RPi-Monitor-Pebble
+
+before_install:
+ - bash ci/before_install.sh
+
+install:
+ - bash ci/build.sh
