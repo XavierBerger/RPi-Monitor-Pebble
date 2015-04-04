@@ -1,56 +1,130 @@
 var load = 0;
 var host = JSON.parse(localStorage.getItem('host')) || [];
+var user = JSON.parse(localStorage.getItem('user')) || [];
+var pass = JSON.parse(localStorage.getItem('pass')) || [];
+var auth = JSON.parse(localStorage.getItem('auth')) || [];
+
+var Base64 = {
+
+// private property
+_keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+
+// public method for encoding
+encode : function (input) {
+    var output = "";
+    var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+    var i = 0;
+
+    input = Base64._utf8_encode(input);
+
+    while (i < input.length) {
+
+        chr1 = input.charCodeAt(i++);
+        chr2 = input.charCodeAt(i++);
+        chr3 = input.charCodeAt(i++);
+
+        enc1 = chr1 >> 2;
+        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+        enc4 = chr3 & 63;
+
+        if (isNaN(chr2)) {
+            enc3 = enc4 = 64;
+        } else if (isNaN(chr3)) {
+            enc4 = 64;
+        }
+
+        output = output +
+        this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
+        this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+
+    }
+
+    return output;
+},
+
+// private method for UTF-8 encoding
+_utf8_encode : function (string) {
+    string = string.replace(/\r\n/g,"\n");
+    var utftext = "";
+
+    for (var n = 0; n < string.length; n++) {
+
+        var c = string.charCodeAt(n);
+
+        if (c < 128) {
+            utftext += String.fromCharCode(c);
+        }
+        else if((c > 127) && (c < 2048)) {
+            utftext += String.fromCharCode((c >> 6) | 192);
+            utftext += String.fromCharCode((c & 63) | 128);
+        }
+        else {
+            utftext += String.fromCharCode((c >> 12) | 224);
+            utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+            utftext += String.fromCharCode((c & 63) | 128);
+        }
+
+    }
+
+    return utftext;
+}
+
+}
 
 function HTTPGET(url) {
 	var req = new XMLHttpRequest();
 	req.open("GET", url, false);
+	if (auth == "1"){
+		req.setRequestHeader("Authorization", "Basic " + Base64.encode(user + ":" + pass)); 
+	}
 	req.send(null);
-	if (req.status = 200) {
+	if (req.status == 200) {
 		load = 1;
 		return req.responseText;
-	};
+	}
 }
 
 function Pad(n){
-  return n<10 ? '0'+n : n
+  return n<10 ? '0'+n : n;
 }
 
 function Plural(n){
-  return n>1 ? 's ' : ' '
+  return n>1 ? 's ' : ' ';
 }
 
 function Uptime(value){
-  uptimetext='';
-  years = Math.floor(value / 31556926);
-  rest = value % 31556926;
-  days = Math.floor( rest / 86400);
+  var uptimetext='';
+  var years = Math.floor(value / 31556926);
+  var rest = value % 31556926;
+  var days = Math.floor( rest / 86400);
   rest = value % 86400;
-  hours = Math.floor(rest / 3600);
+  var hours = Math.floor(rest / 3600);
   rest = value % 3600;
-  minutes = Math.floor(rest / 60);
-  seconds = Math.floor(rest % 60);
-  if ( years != 0 ) { uptimetext += uptimetext + years + " year" + Plural(years) }
-  if ( ( years != 0 ) || ( days != 0) ) { uptimetext += days + " day" + Plural(days)}
-  if ( ( days != 0 ) || ( hours != 0) ) { uptimetext += Pad(hours) + " hour" + Plural(hours)}
+  var minutes = Math.floor(rest / 60);
+  var seconds = Math.floor(rest % 60);
+  if ( years !== 0 ) { uptimetext += uptimetext + years + " year" + Plural(years); }
+  if ( ( years !== 0 ) || ( days !== 0) ) { uptimetext += days + " day" + Plural(days);}
+  if ( ( days !== 0 ) || ( hours !== 0) ) { uptimetext += Pad(hours) + " hour" + Plural(hours);}
   uptimetext += Pad(minutes) + " minute" + Plural(minutes);
   uptimetext += Pad(seconds) + " second" + Plural(seconds);
   return uptimetext;
 }
 
 function KMG(value, initPre){
-  unit = 1024;
-  prefix = "kMGTPE";
+  var unit = 1024;
+  var prefix = "kMGTPE";
   if (initPre){
     value *= Math.pow(unit,prefix.indexOf(initPre)+1);
   }
   try {
-    if (Math.abs(value) < unit) { return value + "B" };
-    exp = Math.floor(Math.log(Math.abs(value)) / Math.log(unit));
-    pre = prefix.charAt(exp-1);
+    if (Math.abs(value) < unit) { return value + "B"; }
+    var exp = Math.floor(Math.log(Math.abs(value)) / Math.log(unit));
+    var pre = prefix.charAt(exp-1);
     return (value / Math.pow(unit, exp)).toFixed(2) + pre + "B";
   }
   catch (e) {
-    return "Error"
+    return "Error";
   }
 }
 
@@ -62,7 +136,7 @@ var getData = function() {
 	var response = HTTPGET(host + "/dynamic.json");
 	var dynamic_json = JSON.parse(response);
 
-	var response = HTTPGET(host + "/static.json");
+	response = HTTPGET(host + "/static.json");
 	var static_json = JSON.parse(response);
 
 	
@@ -109,22 +183,24 @@ var getData = function() {
 
 Pebble.addEventListener("showConfiguration",
   function(e) {
-    Pebble.openURL("http://kropochev.com/pebble/rpi_monitor/index.html");
+	Pebble.openURL("https://kropochev.com/pebble/rpi_monitor/");
   }
 );
 
 Pebble.addEventListener("webviewclosed",
   function(e) {
-    options = JSON.parse(decodeURIComponent(e.response));
+    var options = JSON.parse(decodeURIComponent(e.response));
     localStorage.setItem('host', JSON.stringify(options.host));
+	localStorage.setItem('user', JSON.stringify(options.user));
+	localStorage.setItem('pass', JSON.stringify(options.pass));
+	localStorage.setItem('auth', JSON.stringify(options.auth));
   }
 );
 
 Pebble.addEventListener("ready", function(e) {
-		"use strict";
-		if (host) {
-			//console.log(host);
-			getData();
-		};
-	
+	"use strict";
+	if (host) {
+		//console.log(host);
+		getData();
+	}	
 });
